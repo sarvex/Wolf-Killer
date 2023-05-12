@@ -85,7 +85,7 @@ class Deliver:
         self.his = {}
 
     def add(self, username, msg):
-        if (self.to.get(username) == None):
+        if self.to.get(username) is None:
             self.to[username] = []
             self.his[username] = []
         self.to[username].append(msg)
@@ -99,12 +99,11 @@ class Deliver:
             self.add(item, msg)
 
     def fetch(self, username):
-        if (self.to.get(username) == None):
+        if self.to.get(username) is None:
             return []
-        else:
-            tmp = self.to[username]
-            self.to[username] = []
-            return tmp
+        tmp = self.to[username]
+        self.to[username] = []
+        return tmp
 
 class Game:
     # Game State Constant
@@ -213,11 +212,7 @@ class Game:
             self.deliver.add(item, msg)
 
     def getPlayers(self):
-        names = []
-        for item in self.players:
-            names.append(item)
-
-        return names
+        return list(self.players)
 
     # GAME PROCEDURE
     def enterRoom(self, name):
@@ -275,29 +270,21 @@ class Game:
         self.pro   = self.host'''
 
     def getAlive(self):
-        names = []
-        for item in self.players:
-            if self.players[item].isAlive():
-                names.append(item)
-        return names
+        return [item for item in self.players if self.players[item].isAlive()]
     def getAliveWolves(self):
-        names = []
-        for item in self.wolves:
-            if self.players[item].isAlive():
-                names.append(item)
-        return names
+        return [item for item in self.wolves if self.players[item].isAlive()]
     def getGuardList(self):
-        names = []
-        for item in self.players:
-            if (self.players[item].isAlive() and item != self.lastGuard):
-                names.append(item)
-        return names
+        return [
+            item
+            for item in self.players
+            if (self.players[item].isAlive() and item != self.lastGuard)
+        ]
     def getHunterList(self):
-        names = []
-        for item in self.players:
-            if (self.players[item].isAlive() and item != self.hunter):
-                names.append(item)
-        return names
+        return [
+            item
+            for item in self.players
+            if (self.players[item].isAlive() and item != self.hunter)
+        ]
 
     def doStage(self, name, data):
 

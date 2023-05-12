@@ -50,15 +50,8 @@ def redirectAll(session, now):
         pl = pdb.players[session['name']]
         if (game.state == game.GST_ROOM_CLOSED):
             game = Game()
-        if (game.checkPlayer(pl.username)):
-            goto = 'room_play'
-        else:
-            goto = 'lobby'
-
-    if goto == now:
-        return None
-    else:
-        return goto
+        goto = 'room_play' if (game.checkPlayer(pl.username)) else 'lobby'
+    return None if goto == now else goto
 
 #
 # API for Host
@@ -120,8 +113,7 @@ def api_force_close():
 #
 @app.route('/room', methods=['GET', 'POST'])
 def room_play():
-    goto = redirectAll(session, 'room_play')
-    if (goto):
+    if goto := redirectAll(session, 'room_play'):
         return redirect(url_for(goto))
 
     return render_template('play.html')
@@ -129,8 +121,7 @@ def room_play():
 @app.route('/lobby', methods=['GET', 'POST'])
 def lobby():
     global game
-    goto = redirectAll(session, 'lobby')
-    if (goto):
+    if goto := redirectAll(session, 'lobby'):
         return redirect(url_for(goto))
 
     cfgForm  = GameConfigForm()
@@ -154,9 +145,8 @@ def lobby():
         if joinForm.validate_on_submit():
             if game.addPlayer(pl):
                 return redirect(url_for('room_play'))
-            else:
-                flash('人满了')
-                return render_template('lobby.html', form = joinForm, name = name)
+            flash('人满了')
+            return render_template('lobby.html', form = joinForm, name = name)
         return render_template('lobby.html', form = joinForm, name = name)
     else:
         flash('游戏已经开始')
@@ -190,7 +180,7 @@ def test_host():
     # create players
     pdb.addPlayer('asdf', 'asdf')
     for i in range(n-1):
-        pdb.addPlayer('p' + str(i), 'p' + str(i))
+        pdb.addPlayer(f'p{str(i)}', f'p{str(i)}')
     #pdb.addPlayer('叶温乐', 'ywl') #pdb.addPlayer('董士纬', 'dsw')
     #pdb.addPlayer('徐瑞', 'xr') #pdb.addPlayer('林沈', 'ls')
     #pdb.addPlayer('尤诗超', 'usc') #pdb.addPlayer('阿玉', 'ay')
@@ -202,7 +192,7 @@ def test_host():
     game.state = Game.GST_WAIT_JOIN
     game.setHost(pdb.get('asdf'))
     for i in range(n-1):
-        game.addPlayer(pdb.get('p' + str(i)))
+        game.addPlayer(pdb.get(f'p{str(i)}'))
     #game.addPlayer(pdb.get('叶温乐')) #game.addPlayer(pdb.get('董士纬'))
     #game.addPlayer(pdb.get('徐瑞')) #game.addPlayer(pdb.get('林沈'))
     #game.addPlayer(pdb.get('尤诗超')) #game.addPlayer(pdb.get('阿玉'))
