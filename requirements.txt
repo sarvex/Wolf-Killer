@@ -15,7 +15,7 @@ Jinja2==2.7.1
 JsonForm==0.0.2
 jsonschema==2.5.1
 JsonSir==0.0.2
-Mako==0.9.1
+Mako==1.3.12
 MarkupSafe==0.18
 Python-EasyConfig==0.1.6
 PyYAML==3.12
